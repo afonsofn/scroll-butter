@@ -145,6 +145,6 @@ const updateWrapperOffset = (
 const shouldResize = (wrapper: HTMLElement, wrapperHeight: number): boolean =>
   wrapper.clientHeight !== wrapperHeight
 
-const butter = { init, cancel }
+const scrollButter = { init, cancel }
 
-export default butter
+export default scrollButter
