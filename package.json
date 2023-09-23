@@ -1,0 +1,22 @@
+{
+  "name": "scroll-butter",
+  "version": "1.0.0",
+  "description": "ButterScroll is a lightweight and efficient library designed to provide a smooth scrolling effect for web applications. Crafted to be framework-agnostic, it can be seamlessly integrated into React, Vue, and other frontend projects. With its straightforward and intuitive API, ButterScroll enhances the user's scrolling experience, making it more fluid and pleasant without compromising performance.",
+  "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/afonsofn/scroll-butter"
+  },
+  "keywords": ["scroll", "smooth", "frontend", "react", "vue", "butter"],
+  "author": "Raul Afonso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/afonsofn/scroll-butter/issues"
+  },
+  "homepage": "https://github.com/afonsofn/scroll-butter#readme",
+  "peerDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "private": false
+}
