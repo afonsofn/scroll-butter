@@ -57,14 +57,14 @@ var resize = function (wrapper, animateFunction) {
     return __assign(__assign({}, state), { resizing: false, wrapperHeight: newWrapperHeight, animateId: window.requestAnimationFrame(animateFunction) });
 };
 var animate = function (wrapper, wrapperHeight, wrapperOffset, wrapperDamper, animateFunction) {
-    shouldResize(wrapper, wrapperHeight) && resize(wrapper, animateFunction);
+    if (!state.wrapper)
+        return __assign({}, state);
+    shouldResize(state.wrapper, wrapperHeight) && resize(state.wrapper, animate);
     var newWrapperOffset = updateWrapperOffset(wrapperOffset, wrapperDamper);
-    if (wrapper && wrapper.style) {
-        wrapper.style.transform =
-            'translate3d(0,' + -newWrapperOffset.toFixed(2) + 'px, 0)';
-    }
+    state.wrapper.style.transform =
+        'translate3d(0,' + -newWrapperOffset.toFixed(2) + 'px, 0)';
     return __assign(__assign({}, state), { wrapperOffset: newWrapperOffset, animateId: window.requestAnimationFrame(function () {
-            return animateFunction(wrapper, wrapperHeight, newWrapperOffset, wrapperDamper, animateFunction);
+            return state.wrapper && animate(state.wrapper, wrapperHeight, newWrapperOffset, wrapperDamper, animate);
         }) });
 };
 var cancel = function () {

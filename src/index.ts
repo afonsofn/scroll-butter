@@ -85,25 +85,25 @@ const animate = (
   wrapperDamper: number,
   animateFunction: AnimateFunctionType,
 ): ScrollState => {
-  shouldResize(wrapper, wrapperHeight) && resize(wrapper, animateFunction)
+  if (!state.wrapper) return { ...state }
+
+  shouldResize(state.wrapper, wrapperHeight) && resize(state.wrapper, animate)
 
   const newWrapperOffset = updateWrapperOffset(wrapperOffset, wrapperDamper)
 
-  if (wrapper && wrapper.style) {
-    wrapper.style.transform =
-      'translate3d(0,' + -newWrapperOffset.toFixed(2) + 'px, 0)'
-  }
+  state.wrapper.style.transform =
+    'translate3d(0,' + -newWrapperOffset.toFixed(2) + 'px, 0)'
 
   return {
     ...state,
     wrapperOffset: newWrapperOffset,
     animateId: window.requestAnimationFrame(() =>
-      animateFunction(
-        wrapper,
+      state.wrapper && animate(
+        state.wrapper,
         wrapperHeight,
         newWrapperOffset,
         wrapperDamper,
-        animateFunction,
+        animate,
       ),
     ),
   }
