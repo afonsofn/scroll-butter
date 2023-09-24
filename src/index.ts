@@ -17,42 +17,49 @@ let state: ScrollState = {
 }
 
 const init = (options?: Partial<ScrollSettings>): void => {
-  const settings: ScrollSettings = validateOptions(
-    options || {},
-    defaultSettings,
-  )
-
-  const targetElement = document.getElementById(settings.wrapperId)
-
-  if (!targetElement) return
-
-  state.wrapper = targetElement
-  state.wrapper.style.position = 'fixed'
-  state.wrapper.style.width = '100%'
-  state.wrapperHeight = state.wrapper.clientHeight
-  document.body.style.height = state.wrapperHeight + 'px'
-
-  window.addEventListener('resize', handleResize)
-
-  if (settings.cancelOnTouch) {
-    window.addEventListener('touchstart', cancel)
+  try {
+    const settings: ScrollSettings = validateOptions(
+      options || {},
+      defaultSettings,
+    )
+  
+    const targetElement = document.getElementById(settings.wrapperId)
+  
+    if (!targetElement) return
+    
+    state.active = true;
+    state.wrapper = targetElement
+    state.wrapper.style.position = 'fixed'
+    state.wrapper.style.width = '100%'
+    state.wrapperHeight = state.wrapper.clientHeight
+    document.body.style.height = state.wrapperHeight + 'px'
+  
+    window.addEventListener('resize', handleResize)
+  
+    settings.cancelOnTouch && window.addEventListener('touchstart', cancel)
+  
+    state.animateId = window.requestAnimationFrame(() =>
+      state.wrapper && animate(
+        state.wrapper,
+        state.wrapperHeight,
+        state.wrapperOffset,
+        settings.wrapperDamper,
+        animate,
+      ),
+    )
+  } catch (_error) {
+    cancel()
   }
-
-  state.animateId = window.requestAnimationFrame(() =>
-    animate(
-      state.wrapper as HTMLElement,
-      state.wrapperHeight,
-      state.wrapperOffset,
-      settings.wrapperDamper,
-      animate,
-    ),
-  )
 }
 
 const resize = (
   wrapper: HTMLElement,
   animateFunction: AnimateFunctionType,
 ): ScrollState => {
+  state.resizing = true
+
+  state.animateId && window.cancelAnimationFrame(state.animateId)
+
   const newWrapperHeight = wrapper.clientHeight
 
   if (
@@ -63,6 +70,7 @@ const resize = (
 
   return {
     ...state,
+    resizing: false,
     wrapperHeight: newWrapperHeight,
     animateId: window.requestAnimationFrame(
       animateFunction as unknown as FrameRequestCallback,
@@ -77,9 +85,7 @@ const animate = (
   wrapperDamper: number,
   animateFunction: AnimateFunctionType,
 ): ScrollState => {
-  if (shouldResize(wrapper, wrapperHeight)) {
-    return resize(wrapper, animateFunction)
-  }
+  shouldResize(wrapper, wrapperHeight) && resize(wrapper, animateFunction)
 
   const newWrapperOffset = updateWrapperOffset(wrapperOffset, wrapperDamper)
 
@@ -142,8 +148,10 @@ const updateWrapperOffset = (
   return wrapperOffset + (scrollY - wrapperOffset) * wrapperDamper
 }
 
-const shouldResize = (wrapper: HTMLElement, wrapperHeight: number): boolean =>
-  wrapper.clientHeight !== wrapperHeight
+const shouldResize = (
+  wrapper: HTMLElement,
+  wrapperHeight: number,
+): boolean => !state.resizing && wrapper.clientHeight !== wrapperHeight
 
 const scrollButter = { init, cancel }
 
