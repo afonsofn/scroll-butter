@@ -89,8 +89,10 @@ const animate = (
 
   const newWrapperOffset = updateWrapperOffset(wrapperOffset, wrapperDamper)
 
-  wrapper.style.transform =
-    'translate3d(0,' + -newWrapperOffset.toFixed(2) + 'px, 0)'
+  if (wrapper && wrapper.style) {
+    wrapper.style.transform =
+      'translate3d(0,' + -newWrapperOffset.toFixed(2) + 'px, 0)'
+  }
 
   return {
     ...state,

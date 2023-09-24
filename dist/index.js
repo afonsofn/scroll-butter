@@ -59,8 +59,10 @@ var resize = function (wrapper, animateFunction) {
 var animate = function (wrapper, wrapperHeight, wrapperOffset, wrapperDamper, animateFunction) {
     shouldResize(wrapper, wrapperHeight) && resize(wrapper, animateFunction);
     var newWrapperOffset = updateWrapperOffset(wrapperOffset, wrapperDamper);
-    wrapper.style.transform =
-        'translate3d(0,' + -newWrapperOffset.toFixed(2) + 'px, 0)';
+    if (wrapper && wrapper.style) {
+        wrapper.style.transform =
+            'translate3d(0,' + -newWrapperOffset.toFixed(2) + 'px, 0)';
+    }
     return __assign(__assign({}, state), { wrapperOffset: newWrapperOffset, animateId: window.requestAnimationFrame(function () {
             return animateFunction(wrapper, wrapperHeight, newWrapperOffset, wrapperDamper, animateFunction);
         }) });
