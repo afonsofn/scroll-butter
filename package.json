@@ -1,6 +1,6 @@
 {
   "name": "scroll-butter",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "ScrollButter is a lightweight and efficient library designed to provide a smooth scrolling effect for web applications. Crafted to be framework-agnostic, it can be seamlessly integrated into React, Vue, and other frontend projects. With its straightforward and intuitive API, ScrollButter enhances the user's scrolling experience, making it more fluid and pleasant without compromising performance.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
