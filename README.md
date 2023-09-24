@@ -22,9 +22,9 @@ yarn add scroll-butter
 
 ```javascript
 import { useEffect } from 'react'
-import scrollButter, { ScrollSettings } from 'scroll-butter'
+import scrollButter, { ScrollButterOptions } from 'scroll-butter'
 
-export const useScrollButter = (options?: ScrollSettings) => {
+export const useScrollButter = (options?: ScrollButterOptions) => {
   useEffect(() => {
     scrollButter.init(options)
 
