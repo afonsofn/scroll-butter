@@ -26,34 +26,38 @@ var state = {
     bodyHeight: 0,
 };
 var init = function (options) {
-    var settings = validateOptions(options || {}, defaultSettings);
-    var targetElement = document.getElementById(settings.wrapperId);
-    if (!targetElement)
-        return;
-    state.wrapper = targetElement;
-    state.wrapper.style.position = 'fixed';
-    state.wrapper.style.width = '100%';
-    state.wrapperHeight = state.wrapper.clientHeight;
-    document.body.style.height = state.wrapperHeight + 'px';
-    window.addEventListener('resize', handleResize);
-    if (settings.cancelOnTouch) {
-        window.addEventListener('touchstart', cancel);
+    try {
+        var settings_1 = validateOptions(options || {}, defaultSettings);
+        var targetElement = document.getElementById(settings_1.wrapperId);
+        if (!targetElement)
+            return;
+        state.active = true;
+        state.wrapper = targetElement;
+        state.wrapper.style.position = 'fixed';
+        state.wrapper.style.width = '100%';
+        state.wrapperHeight = state.wrapper.clientHeight;
+        document.body.style.height = state.wrapperHeight + 'px';
+        window.addEventListener('resize', handleResize);
+        settings_1.cancelOnTouch && window.addEventListener('touchstart', cancel);
+        state.animateId = window.requestAnimationFrame(function () {
+            return state.wrapper && animate(state.wrapper, state.wrapperHeight, state.wrapperOffset, settings_1.wrapperDamper, animate);
+        });
     }
-    state.animateId = window.requestAnimationFrame(function () {
-        return animate(state.wrapper, state.wrapperHeight, state.wrapperOffset, settings.wrapperDamper, animate);
-    });
+    catch (_error) {
+        cancel();
+    }
 };
 var resize = function (wrapper, animateFunction) {
+    state.resizing = true;
+    state.animateId && window.cancelAnimationFrame(state.animateId);
     var newWrapperHeight = wrapper.clientHeight;
     if (parseInt(document.body.style.height) !== parseInt("".concat(newWrapperHeight))) {
         document.body.style.height = newWrapperHeight + 'px';
     }
-    return __assign(__assign({}, state), { wrapperHeight: newWrapperHeight, animateId: window.requestAnimationFrame(animateFunction) });
+    return __assign(__assign({}, state), { resizing: false, wrapperHeight: newWrapperHeight, animateId: window.requestAnimationFrame(animateFunction) });
 };
 var animate = function (wrapper, wrapperHeight, wrapperOffset, wrapperDamper, animateFunction) {
-    if (shouldResize(wrapper, wrapperHeight)) {
-        return resize(wrapper, animateFunction);
-    }
+    shouldResize(wrapper, wrapperHeight) && resize(wrapper, animateFunction);
     var newWrapperOffset = updateWrapperOffset(wrapperOffset, wrapperDamper);
     wrapper.style.transform =
         'translate3d(0,' + -newWrapperOffset.toFixed(2) + 'px, 0)';
@@ -83,8 +87,6 @@ var updateWrapperOffset = function (wrapperOffset, wrapperDamper) {
         : document.documentElement.scrollTop || 0.0;
     return wrapperOffset + (scrollY - wrapperOffset) * wrapperDamper;
 };
-var shouldResize = function (wrapper, wrapperHeight) {
-    return wrapper.clientHeight !== wrapperHeight;
-};
+var shouldResize = function (wrapper, wrapperHeight) { return !state.resizing && wrapper.clientHeight !== wrapperHeight; };
 var scrollButter = { init: init, cancel: cancel };
 exports.default = scrollButter;

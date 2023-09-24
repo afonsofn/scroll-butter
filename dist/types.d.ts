@@ -12,4 +12,5 @@ export interface ScrollState {
     wrapperHeight: number;
     bodyHeight: number;
 }
+export type ScrollButterOptions = Partial<ScrollSettings>;
 export type AnimateFunctionType = (wrapper: HTMLElement, wrapperHeight: number, wrapperOffset: number, wrapperDamper: number, animateFunction: AnimateFunctionType) => ScrollState;
